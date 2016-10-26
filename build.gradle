@@ -1,0 +1,22 @@
+apply plugin: 'groovy'
+apply plugin: 'application'
+version = '1.0'
+
+
+
+repositories {
+    mavenCentral()
+}
+
+
+dependencies {
+  compile 'org.codehaus.groovy:groovy-all:2.3.7'
+  compile 'org.codehaus.gpars:gpars:0.12'
+  compile 'org.knowm.xchart:xchart:3.2.1'
+ compile files('./lib/jwave.jar')
+ compile files('./lib/flanagan.jar')
+}
+
+mainClassName="com.sigmethod.SimpleClient"
+
+
