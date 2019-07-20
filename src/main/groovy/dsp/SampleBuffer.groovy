@@ -84,7 +84,20 @@ public class SampleBuffer {
 }
 	 
 	 public int getDepth(){return depth;}
-	 
+
+
+        public String toString() { 
+
+	StringBuffer sb = new StringBuffer() 
+	
+	
+	for(int i = 0; i <depth; i++ ) { 
+		sb.append(get(i)+" ")
+       }
+       
+		sb.append("\n")
+		return sb.toString()
+        }	 
 	public static void main(String[] args) {
 		
 		
