@@ -20,6 +20,9 @@ class Signal {
    this.name = name
 }
 
+
+  public double getDuration() { return values.length*dt } 
+
 public static Signal fromFile(String csvFile, double fs){
 
 	CsvReader reader = new CsvReader(fs)
@@ -27,21 +30,57 @@ public static Signal fromFile(String csvFile, double fs){
 	Signal s = reader.getSignal()
 	return s
 }
-public static Signal fromWaveFile(String waveFile){
+public static Signal[] fromWaveFile(String waveFile){
 
+       String name = waveFile.substring(0,waveFile.indexOf("."))
        TypeConverter converter = TypeConverter.getInstance()
        FileInputStream fis = new FileInputStream(waveFile) 
        byte[]  header = AudioUtils.readHeader(fis)
-       double fs  = RiffFileHeader.getInt(header,24)
+       int numChannels = (int)RiffFileHeader.getShort(header,RiffFileHeader.NUM_CHANNELS)
+       println "numChannels="+numChannels
+       double fs  = RiffFileHeader.getInt(header,RiffFileHeader.SAMPLE_RATE)
        Block.fs = fs
-       int size = RiffFileHeader.getInt(header,40)
-       byte[] body = AudioUtils.readBody(fis,size) 
-       double[] y = converter.convertByteArray(body)
-       Signal s =  new Signal(waveFile,y,1/fs)
+       int size = RiffFileHeader.getInt(header,RiffFileHeader.DATA_SIZE)
+       int numSamples = size/(2*numChannels)
+       byte[][] body = AudioUtils.readBody(fis,size,numChannels)
+       double[][] y = new double[numChannels][numSamples]
+       for(int i = 0; i <numChannels; i++ )  { 
+       	       y[i]= converter.convertByteArray(body[i])
+       }   
+       Signal[] s = new Signal[numChannels] 
+       for(int i = 0; i < numChannels; i++ ) { 
+       	       s[i] = new Signal(name+"_c"+i,y[i],1/fs)
+       }
 	return s
 }
 
+public void saveWave() { 
 
+ int fsample = (int)(1/dt)
+ RiffFileHeader header = new RiffFileHeader(fsample,values.length,1)
+ String fileName = name+".wav" 
+BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(fileName))
+bos.write(header.render(),0,RiffFileHeader.HEADER_SIZE)	
+TypeConverter converter = TypeConverter.getInstance() 					
+byte[] bytes = converter.convertDoubles(values)
+bos.write(bytes,0,bytes.length)
+bos.close()
+}
+
+
+public static Signal fromArray(String name, double[][] y, double dt) { 
+
+        int numChannels  
+
+ }
+
+ public Signal scale(double a) { 
+
+   for(int i = 0; i < values.length; i++ ) { 
+   	   values[i] = a*values[i]
+   }
+  return this
+}
  public Signal add(Signal other) {
 
   int n = Math.min(values.length,other.values.length) 

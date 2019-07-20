@@ -29,7 +29,7 @@ class PlotCommand extends Command {
 		     }
 	 outSig.plot()
 	 double fmax = Block.fs/2.0
-         outSig.plotFreq(fmax)     
+     //    outSig.plotFreq(fmax)     
       }
       public String toString() { 
       

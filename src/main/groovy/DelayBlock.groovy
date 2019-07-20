@@ -8,6 +8,8 @@ class DelayBlock extends Block {
 
 String name 
 int N 
+double fb
+double a
 AnalogFilter filter 
 Block input
 String inNet
@@ -28,7 +30,9 @@ String inNet
       outNet = matcher.group(3) 
       Map params  = getParams(paramsString)
        N = (int)getParam("N",params)
-       filter = new DelayFilter(Block.fs,N)
+       fb = getParam("fb",params,1.0)
+       a = getParam("a",params,1.0)
+       filter = new DelayFilter(Block.fs,N,a,fb)
        
 }
 	else { println "no match" }  
@@ -42,13 +46,6 @@ input = circuit.nodeMap[inNet]
 }
 
 public double eval() { 
- 
- if(count == 0 ) {
- 	  count++ 
-	  circuit.terminals.add(this)
- 	  return filter.peek()
-          
-	  }
 
  if(evaluated) { 
     return value
@@ -71,6 +68,7 @@ public double eval() {
   StringBuffer sb = new StringBuffer()
    sb.append("name="+name+"\n");
    sb.append("N="+N+"\n");
+   sb.append("fb="+fb+"\n");
    sb.append("inNet="+inNet+"\n");
    sb.append("outNet="+outNet+"\n");
   return sb.toString() 

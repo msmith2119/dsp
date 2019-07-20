@@ -3,19 +3,19 @@
 import dsp.* 
 import java.util.regex.*
 
-class AmpBlock extends Block { 
 
+ class ModAmpBlock extends Block  { 
 
 String name 
 Block input
 String inNet
+double max
 double gain
 
+ public static Pattern  PATT =   ~/ModAmp\(([^\(\)]+)\)\s+(\w+)\s+(\w+)\s*/ 
 
- public static Pattern  PATT =   ~/Amp\(([^\(\)]+)\)\s+(\w+)\s+(\w+)\s*/ 
 
- public AmpBlock() {} 
-
+  public ModAmpBlock () {} 
 
 
  public void  parse(String line) { 
@@ -23,32 +23,37 @@ double gain
  
    Matcher matcher = PATT.matcher(line)
    if(matcher.matches()) {
-      name="Amp" 
+      name="ModAmp" 
       String paramsString =  matcher.group(1)
       Map params = getParams(paramsString) 
       inNet = matcher.group(2)
       outNet = matcher.group(3)
-      gain = getParam("gain",params) 
+      max = getParam("max",params,1.0)
+      gain = getParam("gain",params,1.0) 
 }
 	else { println "no match" }  
   
 }
+   public double getSample() {
+    
+    double xin = input.eval()
+    	 double y = 0 
+       y = max*Math.tanh(gain*xin)
+  return y
+}
+
+
 
  public void bind(Circuit circuit) { 
  	input = circuit.nodeMap[inNet]
 	
 }
- public double getSample() { 
-  
- double xin = input.eval()
- double y = gain*xin
- return y 
-}
+
 
   public String toString() { 
   StringBuffer sb = new StringBuffer()
    sb.append("name="+name+"\n");
-   sb.append("gain="+gain+"\n");
+   sb.append("max="+max+"\n");
    sb.append("inNet="+inNet+"\n");
    sb.append("outNet="+outNet+"\n");
   return sb.toString() 

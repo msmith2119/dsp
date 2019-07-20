@@ -8,7 +8,7 @@ class SignalBlock extends  Block
  public String name 
  public String fname
  public String wav 
- public double fs
+ String type
 
 
  public Signal s
@@ -32,16 +32,21 @@ class SignalBlock extends  Block
       outNet = matcher.group(2) 
       Map params  = getParams(paramsString)
        fname  = getStringParam("fname",params)
+       type = getStringParam("type",params)
+       if(type == null) { type = "wav" }  
        wav=getStringParam("wav",params)
-       fs = getParam("fs",params)
-       if(fname != null) { 
-       s = Signal.fromFile(fname,fs) 
+       if(type == "wav") { 
+       Signal[] sigs = Signal.fromWaveFile(wav)
+       s = sigs[0]
        }
-       else if(wav != null) { 
-       s = Signal.fromWaveFile(wav)
-       }
+      else { 
+       double T = getParam("T",params,0.0)
+       s = SignalUtils.noise(name,Block.fs,T);
+      }
+
+              }
        
-}
+
 	else { println "no match" }  
   
 }
@@ -61,7 +66,6 @@ class SignalBlock extends  Block
    sb.append("name="+name+"\n");
    sb.append("fname="+fname+"\n");
    sb.append("wav="+wav+"\n");
-   sb.append("fs="+fs+"\n");
    sb.append("outNet="+outNet+"\n");
   return sb.toString() 
 

@@ -26,6 +26,9 @@ new File(fname).splitEachLine(",") {f ->
   y.add(Double.valueOf(f[1]))
 }
 
+ for(int i = 0; i < time.size(); i++ ) { 
+     time[i] = time[i]-time[0]
+}
 }
 
  public Signal  getSignal() { 

@@ -60,6 +60,17 @@ public String getStringParam (String name, Map params) {
 
 	return v
 }
+
+
+public int getIntParam (String name, Map params, int defVal) { 
+
+       if(!params.containsKey(name)){
+	return defVal
+	}
+       String s = getStringParam(name,params)
+       int v = Integer.valueOf(s) 
+       return v
+}
 public double getParam (String name, Map params, double defVal) { 
 
        if(!params.containsKey(name)){
@@ -83,10 +94,16 @@ public double[] getArrayParam (String name, Map params) {
   public void bind(Circuit circuit) {} 
 
   public static Block parseBlock(Circuit circuit ,String line) { 
+
+
+
           
   	 def m =  line =~ /(\w+)\(.*/
 	 if(m.matches()) { 
-	   String prefix = m.group(1) 
+	   String prefix = m.group(1)
+	   
+
+ 
 	   if(prefix.equals("Sin")) { 
 	   	Block sinBlock = new SinBlock()
 		sinBlock.circuit = circuit 
@@ -159,6 +176,20 @@ public double[] getArrayParam (String name, Map params) {
 		return genBlock
 		
 	   }
+	   if(prefix.equals("CsvFilter")) { 
+	        CsvFilterBlock csvBlock = new CsvFilterBlock()
+		csvBlock.circuit = circuit 
+		csvBlock.parse(line)
+		return csvBlock
+		
+	   }
+	   if(prefix.equals("VTC")) { 
+	        VTCBlock vtcBlock = new VTCBlock()
+		vtcBlock.circuit = circuit 
+		vtcBlock.parse(line)
+		return vtcBlock
+		
+	   }
 	   if(prefix.equals("Mod1")) { 
 	        Mod1Block modBlock = new Mod1Block()
 		modBlock.circuit = circuit 
@@ -175,6 +206,13 @@ public double[] getArrayParam (String name, Map params) {
 	   }
 	   if(prefix.equals("Amp")) { 
 	        AmpBlock ampBlock = new AmpBlock()
+		ampBlock.circuit = circuit 
+		ampBlock.parse(line)
+		return ampBlock
+		
+	   }
+	   if(prefix.equals("ModAmp")) {
+	        ModAmpBlock ampBlock = new ModAmpBlock()
 		ampBlock.circuit = circuit 
 		ampBlock.parse(line)
 		return ampBlock

@@ -47,6 +47,7 @@ class FmDemod {
         double i1 
 	double q1 
 	for(int i = 0; i < xin.length; i++ ) {
+
 		double x = filtBPF(xin[i]) 
                 double phi = phase() 
 		i1 = filtI(x*Math.cos(phi))
@@ -60,6 +61,12 @@ class FmDemod {
 		double minus = ip*delayLineQ.get(1) 
 		double ph = plus - minus 
                 y[i] = 20*filtO(ph)
+                if(i < 20 )  {
+	        double x0 = xin[i]
+		println "x0="+x0
+                println "x="+x
+		println "y="+y[i]
+                }
 		//y[i] = ph
         }
         
@@ -151,5 +158,19 @@ private  double[]  calcBPFCoeff(double fc,double bw,int n){
 	}
 
 
-	
+
+  public void dumpCoeff() { 
+
+  	 for(int i = 0; i < bpf.length; i++ ) { 
+	    println "bpf["+i+"]="+bpf[i]
+         }
+
+  	 for(int i = 0; i < lpf_fq.length; i++ ) { 
+	    println "lpf_fq["+i+"]="+lpf_fq[i]
+         }
+  	 for(int i = 0; i < lpf_fo.length; i++ ) { 
+	    println "lpf_fo["+i+"]="+lpf_fo[i]
+         }
+
+  }	
 }

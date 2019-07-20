@@ -97,6 +97,20 @@ class SignalUtils {
      return s
 
 }
+
+ public static Signal noise(String name, double fs, double T) { 
+
+   double dt = 1/fs;
+   int n = (int)(fs*T);
+   double[] y =  new double[n];
+        for(int i = 0; i < n; i++){
+
+            y[i] = 2*Math.random()  -1;
+
+        }
+   Signal s =  new Signal(name,y,dt)
+   return s;
+}
  public static Signal fm(String name,double a, double f, double fdev,Closure z,double fs, double T) { 
 
 

@@ -42,6 +42,7 @@ class Command {
 			String paramString = m1.group(1)
 			println "paramString="+paramString
 			Map params = Block.getParams(paramString)
+		
 		        println "params = "+params
                         pCommand.params = params
 			println "ZZ params="+params

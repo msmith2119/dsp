@@ -32,7 +32,9 @@ class SinBlock extends  Block
        f = getParam("f",params)
        phi = getParam("phi",params,0)*Math.PI/180
        ampl = getParam("ampl",params)
-      T = getParam("T",params) 
+      T = getParam("T",params)
+      double fs = getParam("fs",params,Block.fs)
+      Block.fs = fs 
       s = SignalUtils.sin(name,ampl,f,phi,Block.fs,T)
        
        

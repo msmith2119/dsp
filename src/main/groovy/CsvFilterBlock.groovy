@@ -3,17 +3,16 @@
 import dsp.* 
 import java.util.regex.*
 
-class GenFilterBlock extends Block { 
+class CsvFilterBlock extends Block { 
 
 
 String name 
-CustomFilter filter 
+AnalogFilter filter 
 Block input
 String inNet
 
 
- public static Pattern  PATT =   ~/Filter\(([\S]+)\)\s+(\w+)\s+(\w+)\s*/
- 
+ public static Pattern  PATT =   ~/CsvFilter\(([^\(\)]+)\)\s+(\w+)\s+(\w+)\s*/ 
 
  public GenFilterBlock() {} 
 
@@ -24,15 +23,25 @@ String inNet
  
    Matcher matcher = PATT.matcher(line)
    if(matcher.matches()) {
-      name="Filter" 
+      name="CsvFilter" 
       String paramsString =  matcher.group(1)
       inNet = matcher.group(2)
       outNet = matcher.group(3) 
       Map params  = getParams(paramsString)
-      int nx = getIntParam("nx",params,1)
-      int ny = getIntParam("ny",params,1)
-      String eqn = getStringParam("eqn",params)
-       filter = new CustomFilter(Block.fs,nx,ny,eqn)       
+      String csvFile = getStringParam("csv",params)
+      double fs = getParam("fs",params)
+      Block.fs = fs
+      CsvReader reader = new CsvReader(fs)
+      reader.load(csvFile)
+      Signal  s =  reader.getSignal()
+      double[] y = s.values
+      double[]  h = new double[y.length-1]
+      for(int i = 0;i < y.length-1;i++ ) { 
+      	      h[i]=y[i]-y[i+1]
+      }
+      filter = new CsvFilter(fs,h)
+
+       
 }
 	else { println "no match" }  
   
@@ -53,8 +62,6 @@ String inNet
   public String toString() { 
   StringBuffer sb = new StringBuffer()
    sb.append("name="+name+"\n");
-   sb.append("a="+filter.A+"\n");
-   sb.append("b="+filter.B+"\n");
    sb.append("inNet="+inNet+"\n");
    sb.append("outNet="+outNet+"\n");
   return sb.toString() 
