@@ -7,6 +7,10 @@ import java.nio.ByteBuffer;
  */
 public class RiffFileHeader {
 
+    public static int NUM_CHANNELS = 22;
+    public static int SAMPLE_RATE = 24;
+    public static int  DATA_SIZE = 40;
+
 
     public RiffFileHeader(int samplingRate,int numSamples,int numChannels){
 
@@ -17,19 +21,32 @@ public class RiffFileHeader {
         fileSize = dataSize + HEADER_SIZE;
 
     }
+
+    public RiffFileHeader(byte[] data){
+        header = data;
+        samplingRate = getInt(header,SAMPLE_RATE);
+        numSamples = (int)getShort(header,NUM_CHANNELS);
+
+    }
     public int numSamples;
     public  int samplingRate;
     public  int numChannels;
     public int fileSize;
     public int dataSize;
+    public byte[] header;
 
      public static int HEADER_SIZE = 44;
 
 
+      public   byte[] copyInPayload(byte[] payload,int n){
+
+          System.arraycopy(payload,0,header,HEADER_SIZE,n);
+           return header;
+      }
       public byte[] render(){
 
           int index = 0;
-          byte[] header = new  byte[fileSize];
+          header = new  byte[fileSize];
 
           // Marks the file as a riff file. Characters are each 1 byte long.
           byte[] bytes = "RIFF".getBytes();

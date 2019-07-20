@@ -26,9 +26,29 @@ public class AudioUtils {
                fis.read(header, 0, RiffFileHeader.HEADER_SIZE);
 	return header;
     }
-    public static byte[] readBody(FileInputStream fis,int size) throws IOException { 
-	byte[] body = new byte[size];
-               fis.read(body, 0, size);
+    public static byte[][] readBody(FileInputStream fis,int size, int numChannels) throws IOException {
+	System.out.println ("readbody:size="+size);
+	System.out.println("readbody:numChannels="+numChannels);
+	int frameSize = 2*numChannels;
+        int asize = size/numChannels;
+	byte[] data = new byte[size];
+
+	int numSamples = size/frameSize;
+
+        int bytesRead = fis.read(data, 0, size);
+
+	byte[][] body = new byte[numChannels][frameSize*numSamples];	
+
+	    int ns = 0;
+	while(ns < numSamples) {  
+		for(int i = 0; i < numChannels; i++ ) { 
+		    body[i][2*ns]=data[ns*frameSize + 2*i];
+		    body[i][2*ns+1] = data[ns*frameSize + 2*i + 1];
+
+		}
+		ns ++;
+	}
+	
 	return body;
     }
     
@@ -192,7 +212,7 @@ public class AudioUtils {
           BufferedInputStream bis = new BufferedInputStream(is);
           AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(bis);
           AudioFormat audioFormat = audioInputStream.getFormat();
-
+	  System.out.println ("audioFormat="+audioFormat);
           SourceDataLine	line = null;
           DataLine.Info	info = new DataLine.Info(SourceDataLine.class,
                   audioFormat);
