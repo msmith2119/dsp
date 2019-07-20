@@ -1,4 +1,4 @@
-Block.fs = 8000
+Block.fs = 44100
 Circuit cir = new Circuit()
 cir.load(args[0]) 
 cir.exec() 

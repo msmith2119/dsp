@@ -3,7 +3,6 @@ Sin(ampl=1.0,f=10,T=0.1) n0
 Fm(ampl=1.0,f=1000,src=n0,pdev=1,T=1) nfm
 Sin(ampl=1.0,f=1000,T=1) n1 
 Sin(ampl=1.0,f=1000,phi=90,T=1) n2
-FmSin(ampl=1.0,f=1000,fm=100,fdev=10,T=1.0)  nfm
 Mult(gain=1.0) n1 nfm ni
 Mult(gain=1.0) n2 nfm nq
 Sinc(fc=300,N=40) ni qo
